@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Expenses Calculator</title>
+	<link href="assets/normalize.css" rel="stylesheet">
+	<link href="assets/style.css" rel="stylesheet">
+	<script type="text/javascript" src="assets/jquery-3.0.0.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="assets/papaparse.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="assets/Chart.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="assets/app.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="content">
+	<h2 class="centered title">Expenses Calculator</h2>
+	<input class="centered projectName" type="text" placeholder="Project Name"/>
+	<input class="file-picker" type="file" id="csv-file" name="files"/>
+	<table class="expensesTable full-width hidden">
+		<thead class="full-width">
+			<tr>
+				<th>Employee <span class="sort" id="emp-asc">▲</span><span class="sort" id="emp-dsc">▼</span></th>
+				<th>Hours <span class="sort" id="hours-asc">▲</span><span class="sort" id="hours-dsc">▼</span></th>
+				<th>Hourly Rate <span class="sort" id="rate-asc">▲</span><span class="sort" id="rate-dsc">▼</span></th>
+				<th>Total Expense <span class="sort" id="exp-asc">▲</span><span class="sort" id="exp-dsc">▼</span></th>
+			</tr>
+		</thead>
+		<tbody class="full-width">
+		</tbody>
+	</table>
+	<div class="centered buttons">
+		<a class="hidden calculate button button1 button-primary">Calculate Expenses</a>
+		<a class="hidden button button1 button-primary" href="index.html-">Restart</a>
+	</div>
+</div>
+
+</body>
+</html>
