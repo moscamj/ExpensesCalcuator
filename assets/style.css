@@ -114,7 +114,7 @@ button.button-primary:focus
 }
 
 .fixedSizeChart {
-	display: inline-block;
+	display: block;
 	height: 35%;
 	width: 35%;
 }
