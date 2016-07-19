@@ -127,6 +127,10 @@ button.button-primary:focus
 	width: 50px;
 }
 
+.input-med {
+	width: 75px;
+}
+
 .title {
 	margin-top: 25px;
 	margin-bottom: 10px;
@@ -143,6 +147,17 @@ button.button-primary:focus
 
 .hidden {
 	display: none;
+}
+
+.logo {
+  white-space: nowrap;
+	display: inline-block;
+  width: 51px;
+  height: 60px;
+  background-image: url("https://authx.digital/binaries/content/gallery/authxusen/bg-images/logo.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+	vertical-align: middle;
 }
 
 .projectName {

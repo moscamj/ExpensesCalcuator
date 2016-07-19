@@ -1,15 +1,47 @@
+// pls donut look at my spaghetti code
+// is in the middle of refactoring :) - Matt
+
 var charts = false,
-    pieColors = ['#8dd3c7','#ffd800','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd'],
+    pieColors = ['#fb8072','#80b1d3','#8dd3c7','#ffd800','#bebada','#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd'],
     pieLabels = [],
     pieHours = [],
     pieExpenses = [],
     rawData,
     newData = [], // contains arrays of name, hours, rate, expenses
-    projectName;
+    projectName,
+		totalHours = 0,
+		totalCost = 0,
+		totalIncome = 0,
+		percentProfit = 0,
+		invoiceCount = 0;
 
-// START file handling function
-// grabs csv file from html input field then parses it through papaparse
-// returns data in var rawData as array
+$(document).ready(function() {
+  $("#csv-file").change(handleFileSelect);
+	$(".sort").click(function() {
+		var dir = $(this).attr('id');
+		sortButtons(dir);
+		$(".asc").removeClass("asc");
+		$(".dsc").removeClass("dsc");
+		$(this).addClass(dir.substr(dir.lastIndexOf("-")+1));
+		$(".Cx").remove();
+		displayEmployeeTable();
+		displayTotals();
+	});
+  $(".calculate").click(function() {
+		$(".asc").removeClass("asc");
+		$(".dsc").removeClass("dsc");
+    prepResults();
+		calculateTotals();
+		displayTotals();
+  });
+	$("#addInvoice").click(function() {
+		addInvoice();
+	});
+	$("#removeInvoice").click(function() {
+		removeInvoice();
+	});
+});
+
 function handleFileSelect(evt) {
   var file = evt.target.files[0];
   Papa.parse(file, {
@@ -21,41 +53,22 @@ function handleFileSelect(evt) {
         $(this).remove();
         $(".hidden").removeClass("hidden");
       });
+			projectName = $(".projectName").val();
+			$("#projectName").html(projectName);
       processHours();
-			displayTable();
+			displayEmployeeTable();
       prepResults();
     }
   });
 }
-$(document).ready(function() {
-  $("#csv-file").change(handleFileSelect);
-	$(".sort").click(function() {
-		var dir = $(this).attr('id');
-		sortButtons(dir);
-		$(".asc").removeClass("asc");
-		$(".dsc").removeClass("dsc");
-		$(this).addClass(dir.substr(dir.lastIndexOf("-")+1));
-		$(".Cx").remove();
-		displayTable();
-	});
-  $(".calculate").click(function() {
-		$(".asc").removeClass("asc");
-		$(".dsc").removeClass("dsc");
-    prepResults();
-  });
-});
 
-// HOURS PROCESSING FUNCTION
-// processes names and hours from csv results in var rawData
-// results end up as names and hours in var newData
 function processHours() {
-  // initialize the data store with all the necessary names and set their hours, hourly rate, and expenses
   for(var i = 0; i < rawData.data.length; i++) {
     var found = false,
         tempName = rawData.data[i]["First Name"] + " " + rawData.data[i]["Last Name"],
         tempHours = rawData.data[i]["Hours"];
     if (i == 0) {
-      newData.push([tempName, 0, 10, 0]);
+      newData.push([tempName, 0, 0, 0]);
     }
     for (var x = 0; x < newData.length; x++) {
       if (newData[x][0] === tempName) {
@@ -64,13 +77,11 @@ function processHours() {
       }
     }
     if (!found) {
-      newData.push([tempName, tempHours, 10, 0]);
+      newData.push([tempName, tempHours, 0, 0]);
     }
   }
 }
 
-// sortByColumn function
-// sorts array a by a column index b
 function sortByColumn(a, colIndex){
   a.sort(sortFunction);
   function sortFunction(a, b) {
@@ -104,9 +115,6 @@ function sortButtons(a) {
 	}
 }
 
-// EXPENSES CALCULATING FUNCTION
-// multiplies the number of hours by the hourly rate entered
-// sticks results in newData
 function calculateExpenses() {
   for(var i = 0; i < newData.length; i++) {
 		var a = Number($("#rate" + i).val());
@@ -120,23 +128,35 @@ function calculateExpenses() {
   }
 }
 
-// DISPLAY TABLE function
-// puts a bunch of table contents into an empty table
-function displayTable() {
+function calculateTotals() {
+	totalHours = 0;
+	totalCost = 0;
+	totalIncome = 0;
+	for (var i = 0; i < newData.length; i++) {
+		totalHours += newData[i][1];
+		totalCost += newData[i][3];
+	}
+	for (var x = 1; x <= invoiceCount; x++) {
+		totalIncome += Number($("#income" + x).val());
+	}
+	percentProfit = (((totalIncome - totalCost) / totalIncome) * 100).toFixed(2);
+}
+
+function displayEmployeeTable() {
   var tbody = $(".expensesTable tbody");
   for (var i = 0; i < newData.length; i++) {
     var tr = $('<tr class="Cx">');
     for (var j = 0; j < 4; j++) {
       if (j === 2) {
         $('<td>').html('$ <input class="input-sm" type="text" id="rate' + i + '" placeholder="'
-         + newData[i][j] + '"> / hr').appendTo(tr);
+         + newData[i][j] + '"></input> / hr').appendTo(tr);
       }
       else if (j === 3) {
         var out = newData[i][j].toFixed(2);
         if (out == 0) {
           out = "";
         }
-        $('<td>').html("$ " + out).appendTo(tr);
+        $('<td>').html('$ ' + out).appendTo(tr);
       }
       else {
         $('<td>').html(newData[i][j]).appendTo(tr);
@@ -146,9 +166,25 @@ function displayTable() {
   }
 }
 
-// convertToChartData function
-// takes existing, processed data in newData, adds it to arrays of
-//   labels, hours, and expenses which are to be used in the chart display function
+function displayTotals() {
+	$("#percentProfit").html(percentProfit + ' %');
+	$("#totalIncome").html('$ ' + totalIncome.toFixed(2));
+	$("#totalCost").html('$ ' + totalCost.toFixed(2));
+	$("#totalHours").html(totalHours);
+}
+
+function addInvoice() {
+	invoiceCount++;
+	$('<tr><td><input class="input-med" type="text"></input></td><td>$ <input class="input-med" type="text" id="income' + invoiceCount + '"></input></td></tr>').insertBefore('#invoices tr:last');
+}
+
+function removeInvoice() {
+	if (invoiceCount > 0) {
+		invoiceCount--;
+	}
+	$('#invoices tr:last').prev().remove();
+}
+
 function convertToChartData() {
   pieLabels.length = 0;
   pieHours.length = 0;
@@ -160,24 +196,21 @@ function convertToChartData() {
   }
 }
 
-// prepResults function
-// calculates expenses, removes existing table rows and charts,
-//   then inserts new table rows and charts
 function prepResults() {
   calculateExpenses();
 	newData = sortByColumn(newData, 0);
 	$("#emp-asc").addClass("asc");
   $(".Cx").remove();
-  $(".charts").remove();
-  charts = false;
-  displayTable();
-  convertToChartData();
-  if (!charts) {
-    $('<div class="centered charts">').html('<div class="fixedSizeChart"><div class="centered bold">Hours</div><canvas id="hoursChart" width="300" height="300"></canvas></div><div class="fixedSizeChart"><div class="centered bold">Total Expense</div><canvas id="expensesChart" width="300" height="300"></canvas>').insertAfter($(".expensesTable"));
-    charts = true;
-  }
-	displayHoursChart();
-	displayExpensesChart();
+  // $(".charts").remove();
+  // charts = false;
+  displayEmployeeTable();
+  // convertToChartData();
+  // if (!charts) {
+  //   $('<div class="centered charts">').html('<div class="fixedSizeChart"><div class="centered bold">Hours</div><canvas id="hoursChart" width="300" height="300"></canvas></div><div class="fixedSizeChart"><div class="centered bold">Total Expense</div><canvas id="expensesChart" width="300" height="300"></canvas>').insertAfter($(".expensesTable"));
+  //   charts = true;
+  // }
+	// displayHoursChart();
+	// displayExpensesChart();
 }
 
 // displayHoursChart function

@@ -12,22 +12,60 @@
 </head>
 <body>
 
-<div class="content">
-  <h2 class="centered title">Expenses Calculator</h2>
-  <input class="centered projectName" type="text" placeholder="Project Name"/>
-  <div class="centered"><span class="Cx bold">.csv only please!</span> <input class="file-picker" type="file" id="csv-file" name="files"/></div>
+<div class="content" id="data-entry">
+  <h2 class="centered title Cx" id="pageTitle">Expenses Calculator</h2>
+	<h2 class="centered hidden title"><a class="logo" href="#"></a><span id="projectName">Project Name</span></h2>
+  <input class="centered projectName Cx" type="text" placeholder="Project Name"/>
+  <center><span class="Cx bold">.csv only please!</span> <input class="file-picker" type="file" id="csv-file" name="files"/></center>
   <table class="expensesTable full-width hidden">
-    <thead class="full-width">
+    <thead>
       <tr>
         <th>Employee <span class="sort" id="emp-asc">▲</span><span class="sort" id="emp-dsc">▼</span></th>
         <th>Hours <span class="sort" id="hours-asc">▲</span><span class="sort" id="hours-dsc">▼</span></th>
-        <th>Hourly Rate <span class="sort" id="rate-asc">▲</span><span class="sort" id="rate-dsc">▼</span></th>
-        <th>Total Expense <span class="sort" id="exp-asc">▲</span><span class="sort" id="exp-dsc">▼</span></th>
+        <th>Billable Rate <span class="sort" id="rate-asc">▲</span><span class="sort" id="rate-dsc">▼</span></th>
+        <th>Cost <span class="sort" id="exp-asc">▲</span><span class="sort" id="exp-dsc">▼</span></th>
       </tr>
     </thead>
-    <tbody class="full-width">
+    <tbody>
     </tbody>
   </table>
+	<table class="hidden full-width" id="lower">
+		<tr>
+			<td width="50%">
+				<table class="full-width">
+					<thead>
+						<tr><th style="text-align: center">Invoice #</th><th style="text-align: center">Income</th></tr>
+					</thead>
+					<tbody id="invoices">
+						<tr>
+							<td><a class="button" id="addInvoice">+</a></td>
+							<td><a class="button" id="removeInvoice">-</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+			<td width="50%" id="totals">
+				<table class="full-width">
+					<tr>
+						<th>% Profit:</th>
+						<td id="percentProfit"></td>
+					</tr>
+					<tr>
+						<th>Total Income:</th>
+						<td id="totalIncome"></td>
+					</tr>
+					<tr>
+						<th>Total Cost:</th>
+						<td id="totalCost"></td>
+					</tr>
+					<tr>
+						<th>Total Hours:</th>
+						<td id="totalHours"></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
   <div class="centered buttons">
     <a class="hidden calculate button button1 button-primary">Calculate Expenses</a>
     <a class="hidden button button1 button-primary" href="index.html">Restart</a>
