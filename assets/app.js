@@ -67,6 +67,9 @@ function processHours() {
     var found = false,
         tempName = rawData.data[i]["First Name"] + " " + rawData.data[i]["Last Name"],
         tempHours = rawData.data[i]["Hours"];
+		if (tempName === "Undefined") {
+			continue;
+		}
     if (i == 0) {
       newData.push([tempName, 0, 0, 0]);
     }
@@ -158,6 +161,10 @@ function displayEmployeeTable() {
         }
         $('<td>').html('$ ' + out).appendTo(tr);
       }
+			else if (j === 1) {
+				var out = newData[i][j].toFixed(2);
+				$('<td>').html(out).appendTo(tr);
+			}
       else {
         $('<td>').html(newData[i][j]).appendTo(tr);
       }
