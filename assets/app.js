@@ -142,6 +142,7 @@ function calculateTotals() {
 	for (var x = 1; x <= invoiceCount; x++) {
 		totalIncome += Number($("#income" + x).val());
 	}
+	totalHours = totalHours.toFixed(2);
 	percentProfit = (((totalIncome - totalCost) / totalIncome) * 100).toFixed(2);
 }
 
